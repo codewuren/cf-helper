@@ -13,9 +13,8 @@ impl Helper {
     // Print the help message
     pub fn help(&self) {
         println!("Usage: ");
-        println!("  cf-helper gen [TestName]\tGenerate a solution");
+        println!("  cf-helper -g [TestName]\tGenerate a solution");
         println!("  cf-helper test [TestName]\tTest a solution");
-        println!("  cf-helper user-info\t\tGet user info");
     }
 
     // read a file and return the contents as a Vec<String>

@@ -106,9 +106,17 @@ impl Helper {
         command += " && cat ";
         command += _filename;
         command += ".output";
+        
+        let mut output: String = self.run_command(command);
+        println!("the output is:\n{}", output);
 
-        let output: String = self.run_command(command);
-        println!("{}", output);
+        command = String::from("cat ");
+        command += _filename;
+        command += ".input";
+
+        output = self.run_command(command);
+
+        println!("the input is:\n{}", output);
     }
 
     // warn a error and quit if _exit_yon is true

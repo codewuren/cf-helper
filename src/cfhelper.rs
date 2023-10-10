@@ -90,6 +90,7 @@ impl Helper {
 
         // get the full command and run
         let mut command: String = String::from("g++ ");
+
         command += _filename;
         command += ".cpp";
         command += " --std=c++11 -O2 -o ";
@@ -102,8 +103,11 @@ impl Helper {
         command += " > ";
         command += _filename;
         command += ".output";
+        command += " && cat ";
+        command += _filename;
+        command += ".output";
 
-        let output = self.run_command(command);
+        let output: String = self.run_command(command);
         println!("{}", output);
     }
 

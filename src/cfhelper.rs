@@ -87,6 +87,8 @@ impl Helper {
     pub fn test(&self, _filename: &String) {
         // Note: we only support the .cpp extension name
         println!("test started...");
+
+        // get the full command and run
         let mut command: String = String::from("g++ ");
         command += _filename;
         command += ".cpp";
@@ -94,8 +96,15 @@ impl Helper {
         command += _filename;
         command += " && ./";
         command += _filename;
+        command += " < ";
+        command += _filename;
+        command += ".input";
+        command += " > ";
+        command += _filename;
+        command += ".output";
 
-        self.run_command(command);
+        let output = self.run_command(command);
+        println!("{}", output);
     }
 
     // warn a error and quit if _exit_yon is true

@@ -4,6 +4,10 @@ use std::io::Read;
 use std::io::Write;
 use std::process;
 use std::process::Command;
+extern crate reqwest;
+use codeforces_api::requests::CFAPIRequestable;
+use codeforces_api::responses::CFResult;
+use codeforces_api::requests::CFUserCommand;
 
 pub struct Helper {
     
@@ -79,8 +83,8 @@ impl Helper {
 
         // read the contents of the template and write them into the target file
         let file_content: Vec<String> = self.read_file_vec(&template_path);
-        _filename.push_str(".cpp");
-        self.write_file(_filename, file_content);
+        self.write_file(&format!("{filename}.cpp", filename = _filename), file_content);
+        self.write_file(&format!("{filename}.input", filename = _filename), vec![]);
     }
 
     // run a test
@@ -89,30 +93,20 @@ impl Helper {
         println!("test started...");
 
         // get the full command and run
-        let mut command: String = String::from("g++ ");
-
-        command += _filename;
-        command += ".cpp";
-        command += " --std=c++11 -O2 -o ";
-        command += _filename;
-        command += " && ./";
-        command += _filename;
-        command += " < ";
-        command += _filename;
-        command += ".input";
-        command += " > ";
-        command += _filename;
-        command += ".output";
-        command += " && cat ";
-        command += _filename;
-        command += ".output";
+        let mut command: String = format!("g++ 
+            {filename}.cpp 
+            --std=c++11 
+            -O2 
+            -o {filename} 
+            && ./{filename} 
+            < {filename}.input 
+            > {filename}.output", 
+            filename = _filename);
         
         let mut output: String = self.run_command(command);
         println!("the output is:\n{}", output);
 
-        command = String::from("cat ");
-        command += _filename;
-        command += ".input";
+        command = format!("cat {filename}.input", filename = _filename);
 
         output = self.run_command(command);
 
@@ -130,5 +124,35 @@ impl Helper {
     // print the version information
     pub fn print_version(&self) {
         println!("print_version()");
+    }
+
+    // get user info through CodeForces's API
+    pub fn get_user_info(&self, _username: &String) {
+        let username_vec: Vec<String> = vec![String::from(_username)];
+
+        // This is equivalent to the Codeforces `blogEntry.view` API method.
+        let x: CFUserCommand = CFUserCommand::Info { 
+            handles: username_vec,
+        };
+
+        // The `.get(..)` method on API commands returns a result with either
+        // an error or an `Ok(CFResult)`.
+        match x.get("2be5730459cc39ead0f78dc555d65118cb548121", "2a048d9e23c5d9d282c3059108888fa78e3b7243") {
+            Ok(CFResult::CFUserVec(handles)) => {
+                println!("Your user info: {:?}", handles);
+            },
+            Ok(_) => {
+                // In very rare cases, an unexpected type may be returned by
+                // `.get()`. If this happens, then you may wish to throw a
+                // custom error.
+                panic!("`.get()` returned an unexpected type.");
+            }
+            Err(e) => {
+                // Errors returned are of a custom Error type. This could be
+                // returned if, for example, an invalid API key/secret was used
+                // or if there was no internet connection.
+                panic!("something failed {:?}", e);
+            }
+        }
     }
 }

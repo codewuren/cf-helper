@@ -126,20 +126,23 @@ impl Helper {
         println!("print_version()");
     }
 
-    // get user info through CodeForces's API
+    // get user info through CodeForces's API and return them as a Vec<String>
     pub fn get_user_info(&self, _username: &String) {
-        let username_vec: Vec<String> = vec![String::from(_username)];
+        let handle_vec: Vec<String> = vec!(String::from(_username));
 
         // This is equivalent to the Codeforces `blogEntry.view` API method.
         let x: CFUserCommand = CFUserCommand::Info { 
-            handles: username_vec,
+            handles: handle_vec
         };
 
         // The `.get(..)` method on API commands returns a result with either
         // an error or an `Ok(CFResult)`.
         match x.get("2be5730459cc39ead0f78dc555d65118cb548121", "2a048d9e23c5d9d282c3059108888fa78e3b7243") {
             Ok(CFResult::CFUserVec(handles)) => {
-                println!("Your user info: {:?}", handles);
+                println!("Your user name: {:?}", handles[0].handle);
+                println!("Your country name: {:?}", handles[0].country);
+                println!("Your email: {:?}", handles[0].email);
+                println!("Your rating: {:?}", handles[0].rating);
             },
             Ok(_) => {
                 // In very rare cases, an unexpected type may be returned by

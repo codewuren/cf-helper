@@ -126,11 +126,11 @@ impl Helper {
         println!("print_version()");
     }
 
-    // get user info through CodeForces's API and return them as a Vec<String>
+    // get user info through CodeForces's API
     pub fn get_user_info(&self, _username: &String) {
         let handle_vec: Vec<String> = vec!(String::from(_username));
 
-        // This is equivalent to the Codeforces `blogEntry.view` API method.
+        // This is equivalent to the Codeforces `user.info` API method.
         let x: CFUserCommand = CFUserCommand::Info { 
             handles: handle_vec
         };
@@ -157,5 +157,10 @@ impl Helper {
                 panic!("something failed {:?}", e);
             }
         }
+    }
+
+    // fetch problemset
+    pub fn get_problem(&self) {
+
     }
 }

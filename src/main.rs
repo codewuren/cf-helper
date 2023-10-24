@@ -4,7 +4,14 @@ use std::env;
 
 
 fn main() {
-    let helper = Helper {  };
+
+    // Create a new Helper obeject
+    let helper = Helper {
+        api_key: String::from("2be5730459cc39ead0f78dc555d65118cb548121"),
+        api_secret: String::from("2a048d9e23c5d9d282c3059108888fa78e3b7243")
+    };
+
+    // Get the arguments
     let mut args: Vec<String> = env::args().collect();
     if args.len() == 1 {
         helper.help();
@@ -25,6 +32,9 @@ fn main() {
         }
         else if args[i] == "-i" || args[i] == "-user_info" {
             helper.get_user_info(&args[i + 1]);
+        }
+        else if args[i] == "-p" || args[i] == "-problem" {
+            helper.get_problem(&args[i + 1]);
         }
     }
 }

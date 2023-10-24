@@ -6,11 +6,14 @@ use std::process;
 use std::process::Command;
 extern crate reqwest;
 use codeforces_api::requests::CFAPIRequestable;
+use codeforces_api::requests::CFProblemsetCommand;
+use codeforces_api::responses::CFProblem;
 use codeforces_api::responses::CFResult;
 use codeforces_api::requests::CFUserCommand;
 
 pub struct Helper {
-    
+    pub api_key: String,
+    pub api_secret: String
 }
 
 impl Helper {
@@ -46,12 +49,15 @@ impl Helper {
     // write the contents in _vec into a file
     pub fn write_file(&self, _filename: &String, _vec: Vec<String>) {
         // open the file
-        let mut file = std::fs::File::create(_filename).expect("create failed!");
+        let mut file = std::fs::File::create(_filename)
+            .expect("create failed!");
         
         // loop _vec and put each line into the target file
         for i in 0.._vec.len() {
-            file.write_all(&_vec[i].as_bytes()).expect("write failed!");
-            file.write_all("\n".as_bytes()).expect("write failed!");
+            file.write_all(&_vec[i].as_bytes())
+                .expect("write failed!");
+            file.write_all("\n".as_bytes())
+                .expect("write failed!");
         }
         println!("file {} create successful!", _filename);
     }
@@ -66,7 +72,8 @@ impl Helper {
             .arg(_command)
             .output()
             .expect("Wrong!");
-        let mut str_output: String = String::from_utf8(output.stdout).unwrap();
+        let mut str_output: String = String::from_utf8(output.stdout)
+            .unwrap();
         str_output.pop(); // delete the '\n'
         str_output
     }
@@ -93,7 +100,8 @@ impl Helper {
         println!("test started...");
 
         // get the full command and run
-        let mut command: String = format!("g++ 
+        let mut command: String = format!(
+            "g++ 
             {filename}.cpp 
             --std=c++11 
             -O2 
@@ -101,7 +109,8 @@ impl Helper {
             && ./{filename} 
             < {filename}.input 
             > {filename}.output", 
-            filename = _filename);
+            filename = _filename
+        );
         
         let mut output: String = self.run_command(command);
         println!("the output is:\n{}", output);
@@ -128,16 +137,16 @@ impl Helper {
 
     // get user info through CodeForces's API
     pub fn get_user_info(&self, _username: &String) {
-        let handle_vec: Vec<String> = vec!(String::from(_username));
+        let username_vec: Vec<String> = vec!(String::from(_username));
 
         // This is equivalent to the Codeforces `user.info` API method.
         let x: CFUserCommand = CFUserCommand::Info { 
-            handles: handle_vec
+            handles: username_vec
         };
 
         // The `.get(..)` method on API commands returns a result with either
         // an error or an `Ok(CFResult)`.
-        match x.get("2be5730459cc39ead0f78dc555d65118cb548121", "2a048d9e23c5d9d282c3059108888fa78e3b7243") {
+        match x.get(self.api_key.as_str(), self.api_secret.as_str()) {
             Ok(CFResult::CFUserVec(handles)) => {
                 println!("Your user name: {:?}", handles[0].handle);
                 println!("Your country name: {:?}", handles[0].country);
@@ -160,7 +169,29 @@ impl Helper {
     }
 
     // fetch problemset
-    pub fn get_problem(&self) {
+    pub fn get_problem(&self, _problem: &String) {
+        let x: CFProblemsetCommand = CFProblemsetCommand::Problems { 
+            tags: Some(vec![String::from(_problem)]),
+            problemset_name: None
+        };
+
+        match x.get(self.api_key.as_str(), self.api_secret.as_str()) {
+            Ok(CFResult::CFProblemset(problem)) => {
+                for i in 0..problem.problems.len() {
+                    println!(
+                        "Problem {idx}: {name}",
+                        idx = i,
+                        name = problem.problems[i].name
+                    );
+                }
+            },
+            _ => {
+                // Errors returned are of a custom Error type. This could be
+                // returned if, for example, an invalid API key/secret was used
+                // or if there was no internet connection.
+                panic!("something failed!");
+            }   
+        }
 
     }
 }

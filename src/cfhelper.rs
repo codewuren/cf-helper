@@ -101,13 +101,13 @@ impl Helper {
 
         // get the full command and run
         let mut command: String = format!(
-            "g++ 
-            {filename}.cpp 
-            --std=c++11 
-            -O2 
-            -o {filename} 
-            && ./{filename} 
-            < {filename}.input 
+            "g++ \
+            {filename}.cpp \
+            --std=c++11 \
+            -O2 \
+            -o {filename} \
+            && ./{filename} \
+            < {filename}.input \
             > {filename}.output", 
             filename = _filename
         );
@@ -168,7 +168,7 @@ impl Helper {
         }
     }
 
-    // fetch problemset
+    // search problemset
     pub fn search_problems(&self, _problem: &String) {
         let x: CFProblemsetCommand = CFProblemsetCommand::Problems { 
             tags: Some(vec![String::from(_problem)]),

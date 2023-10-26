@@ -34,7 +34,7 @@ fn main() {
             helper.get_user_info(&args[i + 1]);
         }
         else if args[i] == "-p" || args[i] == "-problem" {
-            helper.get_problem(&args[i + 1]);
+            helper.find_problems(&args[i + 1]);
         }
     }
 }

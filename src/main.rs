@@ -33,8 +33,8 @@ fn main() {
         else if args[i] == "-i" || args[i] == "-user_info" {
             helper.get_user_info(&args[i + 1]);
         }
-        else if args[i] == "-p" || args[i] == "-problem" {
-            helper.find_problems(&args[i + 1]);
+        else if args[i] == "-s" || args[i] == "-search" {
+            helper.search_problems(&args[i + 1]);
         }
     }
 }

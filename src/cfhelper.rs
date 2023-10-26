@@ -169,7 +169,7 @@ impl Helper {
     }
 
     // fetch problemset
-    pub fn find_problems(&self, _problem: &String) {
+    pub fn search_problems(&self, _problem: &String) {
         let x: CFProblemsetCommand = CFProblemsetCommand::Problems { 
             tags: Some(vec![String::from(_problem)]),
             problemset_name: None

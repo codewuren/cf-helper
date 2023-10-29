@@ -1,15 +1,10 @@
 use std::fs::File;
-//use std::fs;
-use std::io::Read;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::process;
 use std::process::Command;
-extern crate reqwest;
-use codeforces_api::requests::CFAPIRequestable;
-use codeforces_api::requests::CFProblemsetCommand;
-use codeforces_api::responses::CFProblem;
+use codeforces_api::requests::{CFAPIRequestable, CFProblemsetCommand, CFUserCommand};
+//use codeforces_api::responses::CFProblem;
 use codeforces_api::responses::CFResult;
-use codeforces_api::requests::CFUserCommand;
 
 pub struct Helper {
     pub api_key: String,
@@ -17,7 +12,7 @@ pub struct Helper {
 }
 
 impl Helper {
-    // Print the help message
+    // print the help message
     pub fn help(&self) {
         println!("Usage: ");
         println!("  cf-helper -g [TestName]\tGenerate a solution");
@@ -40,11 +35,11 @@ impl Helper {
         file_contents
     }
 
-    //// read a file and return the contents as a String
-    //pub fn read_file_string(&self, _filename: &String) -> String {
-    //    let _str = fs::read_to_string(_filename).expect("Couldn't read the file!\n");
-    //    _str
-    //}
+    // // read a file and return the contents as a String
+    // pub fn read_file_string(&self, _filename: &String) -> String {
+    //     let _str = fs::read_to_string(_filename).expect("Couldn't read the file!\n");
+    //     _str
+    // }
 
     // write the contents in _vec into a file
     pub fn write_file(&self, _filename: &String, _vec: Vec<String>) {
@@ -79,14 +74,20 @@ impl Helper {
 
     // generate the template code
     pub fn gen_code(&self, _filename: &mut String) {
-        // Get user_home
+        // get user_home
         let mut template_path: String = self.run_command(String::from("echo $HOME"));
+
+        // remove the '\n'
         template_path.pop();
+        
+        // get the template path
         template_path += "/.config/cf-helper/template";
-        println!("template file located at: {}", template_path);
 
         // create the configuration folder
         self.run_command(String::from("mkdir ~/.config/cf-helper"));
+
+        // print template path
+        println!("template file located at: {}", template_path);
 
         // read the contents of the template and write them into the target file
         let file_content: Vec<String> = self.read_file_vec(&template_path);
@@ -96,7 +97,7 @@ impl Helper {
 
     // run a test
     pub fn test(&self, _filename: &String) {
-        // Note: we only support the .cpp extension name
+        // note: we only support the .cpp extension name
         println!("test started...");
 
         // get the full command and run
@@ -139,12 +140,12 @@ impl Helper {
     pub fn get_user_info(&self, _username: &String) {
         let username_vec: Vec<String> = vec!(String::from(_username));
 
-        // This is equivalent to the Codeforces `user.info` API method.
+        // this is equivalent to the Codeforces `user.info` API method.
         let x: CFUserCommand = CFUserCommand::Info { 
             handles: username_vec
         };
 
-        // The `.get(..)` method on API commands returns a result with either
+        // the `.get(..)` method on API commands returns a result with either
         // an error or an `Ok(CFResult)`.
         match x.get(self.api_key.as_str(), self.api_secret.as_str()) {
             Ok(CFResult::CFUserVec(handles)) => {
@@ -154,7 +155,7 @@ impl Helper {
                 println!("Your rating: {:?}", handles[0].rating);
             },
             Ok(_) => {
-                // In very rare cases, an unexpected type may be returned by
+                // in very rare cases, an unexpected type may be returned by
                 // `.get()`. If this happens, then you may wish to throw a
                 // custom error.
                 panic!("`.get()` returned an unexpected type.");

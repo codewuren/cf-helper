@@ -5,13 +5,13 @@ use std::env;
 
 fn main() {
 
-    // Create a new Helper obeject
+    // create a new Helper obeject
     let helper = Helper {
         api_key: String::from("2be5730459cc39ead0f78dc555d65118cb548121"),
         api_secret: String::from("2a048d9e23c5d9d282c3059108888fa78e3b7243")
     };
 
-    // Get the arguments
+    // get the arguments
     let mut args: Vec<String> = env::args().collect();
     if args.len() == 1 {
         helper.help();

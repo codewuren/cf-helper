@@ -5,7 +5,7 @@ build:
 
 install:
 	cargo build
-	install ./target/debug/cf-helper "/usr/bin/"
+	install ./target/debug/cf-helper "/usr/bin/cf"
 
 uninstall:
-	rm /usr/bin/cf-helper
+	rm /usr/bin/cf

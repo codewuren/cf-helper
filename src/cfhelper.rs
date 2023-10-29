@@ -72,9 +72,8 @@ impl Helper {
             .arg(_command)
             .output()
             .expect("Wrong!");
-        let mut str_output: String = String::from_utf8(output.stdout)
+        let str_output: String = String::from_utf8(output.stdout)
             .unwrap();
-        str_output.pop(); // delete the '\n'
         str_output
     }
 
@@ -82,6 +81,7 @@ impl Helper {
     pub fn gen_code(&self, _filename: &mut String) {
         // Get user_home
         let mut template_path: String = self.run_command(String::from("echo $HOME"));
+        template_path.pop();
         template_path += "/.config/cf-helper/template";
         println!("template file located at: {}", template_path);
 

@@ -108,7 +108,7 @@ impl Helper {
             -o {filename} \
             && ./{filename} \
             < {filename}.input \
-            > {filename}.output", 
+            > {filename}.output && cat {filename}.output", 
             filename = _filename
         );
         

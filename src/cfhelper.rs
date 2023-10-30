@@ -114,13 +114,23 @@ impl Helper {
         );
         
         let mut output: String = self.run_command(command);
-        println!("the output is:\n{}", output);
+        if !output.is_empty() {
+            println!("the output is:\n{}", output);
+        }
+        else {
+            println!("no output");
+        }
 
         command = format!("cat {filename}.input", filename = filename);
 
         output = self.run_command(command);
 
-        println!("the input is:\n{}", output);
+        if !output.is_empty() {
+            println!("the input is:\n{}", output);
+        }
+        else {
+            println!("no input");
+        }
     }
 
     // warn a error and quit if exit_yon is true

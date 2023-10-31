@@ -1,14 +1,14 @@
+use codeforces_api::requests::{CFAPIRequestable, CFProblemsetCommand, CFUserCommand};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::process;
 use std::process::Command;
-use codeforces_api::requests::{CFAPIRequestable, CFProblemsetCommand, CFUserCommand};
 //use codeforces_api::responses::CFProblem;
 use codeforces_api::responses::CFResult;
 
 pub struct Helper {
     pub api_key: String,
-    pub api_secret: String
+    pub api_secret: String,
 }
 
 impl Helper {
@@ -29,7 +29,8 @@ impl Helper {
         file.read_to_string(&mut raw_file_contents)
             .ok()
             .expect("failed to read!");
-        let file_contents: Vec<String> = raw_file_contents.split("\n")
+        let file_contents: Vec<String> = raw_file_contents
+            .split("\n")
             .map(|s: &str| s.to_string())
             .collect();
         file_contents
@@ -44,15 +45,12 @@ impl Helper {
     // write the contents in _vec into a file
     pub fn write_file(&self, _filename: &String, vec: Vec<String>) {
         // open the file
-        let mut file = std::fs::File::create(_filename)
-            .expect("create failed!");
-        
+        let mut file = std::fs::File::create(_filename).expect("create failed!");
+
         // loop _vec and put each line into the target file
         for i in 0..vec.len() {
-            file.write_all(&vec[i].as_bytes())
-                .expect("write failed!");
-            file.write_all("\n".as_bytes())
-                .expect("write failed!");
+            file.write_all(&vec[i].as_bytes()).expect("write failed!");
+            file.write_all("\n".as_bytes()).expect("write failed!");
         }
         println!("file {} create successful!", _filename);
     }
@@ -67,8 +65,7 @@ impl Helper {
             .arg(command)
             .output()
             .expect("Wrong!");
-        let str_output: String = String::from_utf8(output.stdout)
-            .unwrap();
+        let str_output: String = String::from_utf8(output.stdout).unwrap();
         str_output
     }
 
@@ -79,7 +76,7 @@ impl Helper {
 
         // remove the '\n'
         template_path.pop();
-        
+
         // get the template path
         template_path += "/.config/cf-helper/template";
 
@@ -91,7 +88,10 @@ impl Helper {
 
         // read the contents of the template and write them into the target file
         let file_content: Vec<String> = self.read_file_vec(&template_path);
-        self.write_file(&format!("{filename}.cpp", filename = filename), file_content);
+        self.write_file(
+            &format!("{filename}.cpp", filename = filename),
+            file_content,
+        );
         self.write_file(&format!("{filename}.input", filename = filename), vec![]);
     }
 
@@ -109,15 +109,14 @@ impl Helper {
             -o {filename} \
             && ./{filename} \
             < {filename}.input \
-            > {filename}.output && cat {filename}.output", 
+            > {filename}.output && cat {filename}.output",
             filename = filename
         );
-        
+
         let mut output: String = self.run_command(command);
         if !output.is_empty() {
             println!("the output is:\n{}", output);
-        }
-        else {
+        } else {
             println!("no output");
         }
 
@@ -127,8 +126,7 @@ impl Helper {
 
         if !output.is_empty() {
             println!("the input is:\n{}", output);
-        }
-        else {
+        } else {
             println!("no input");
         }
     }
@@ -148,11 +146,11 @@ impl Helper {
 
     // get user info through CodeForces's API
     pub fn get_user_info(&self, username: &String) {
-        let username_vec: Vec<String> = vec!(String::from(username));
+        let username_vec: Vec<String> = vec![String::from(username)];
 
         // this is equivalent to the Codeforces `user.info` API method.
-        let x: CFUserCommand = CFUserCommand::Info { 
-            handles: username_vec
+        let x: CFUserCommand = CFUserCommand::Info {
+            handles: username_vec,
         };
 
         // the `.get(..)` method on API commands returns a result with either
@@ -163,7 +161,7 @@ impl Helper {
                 println!("Your country name: {:?}", handles[0].country);
                 println!("Your email: {:?}", handles[0].email);
                 println!("Your rating: {:?}", handles[0].rating);
-            },
+            }
             Ok(_) => {
                 // in very rare cases, an unexpected type may be returned by
                 // `.get()`. If this happens, then you may wish to throw a
@@ -181,9 +179,9 @@ impl Helper {
 
     // search problemset
     pub fn search_problems(&self, problem: &String) {
-        let x: CFProblemsetCommand = CFProblemsetCommand::Problems { 
+        let x: CFProblemsetCommand = CFProblemsetCommand::Problems {
             tags: Some(vec![String::from(problem)]),
-            problemset_name: None
+            problemset_name: None,
         };
 
         match x.get(self.api_key.as_str(), self.api_secret.as_str()) {
@@ -195,14 +193,13 @@ impl Helper {
                         name = problem.problems[i].name
                     );
                 }
-            },
+            }
             _ => {
                 // Errors returned are of a custom Error type. This could be
                 // returned if, for example, an invalid API key/secret was used
                 // or if there was no internet connection.
                 panic!("something failed!");
-            }   
+            }
         }
-
     }
 }
